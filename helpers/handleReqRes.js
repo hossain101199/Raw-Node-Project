@@ -39,26 +39,31 @@ handler.handleReqRes = (req, res) => {
 
   const decoder = new StringDecoder('utf-8');
   let realData = '';
-  // _____________________________________________________
-  const choseHandler = routes[trimmedpath] ? routes[trimmedpath] : notFoundHandler;
 
-  choseHandler(requestProperties, (statusCode, payload) => {
-    statusCode = typeof statusCode === 'number' ? statusCode : 500;
-    payload = typeof payload === 'object' ? payload : {};
-    const payloadString = JSON.stringify(payload);
+  const choseHandler = routes[trimmedpath]
+    ? routes[trimmedpath]
+    : notFoundHandler;
 
-    // return the final response
-    res.writeHead(statusCode);
-    res.end(payloadString);
-  });
-  // _____________________________________________________
   req.on('data', (buffer) => {
     realData += decoder.write(buffer);
   });
+
   req.on('end', () => {
     realData += decoder.end();
+
+    choseHandler(requestProperties, (statusCode, payload) => {
+      statusCode = typeof statusCode === 'number' ? statusCode : 500;
+      payload = typeof payload === 'object' ? payload : {};
+      const payloadString = JSON.stringify(payload);
+
+      // return the final response
+      res.writeHead(statusCode);
+      res.end(payloadString);
+    });
+
     res.end(`your data is "${realData}"`);
   });
 };
 
+// export module
 module.exports = handler;
