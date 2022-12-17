@@ -13,6 +13,7 @@ const routes = require('../routes');
 const {
   notFoundHandler,
 } = require('../handlers/routeHandlers/notFoundHandler');
+const { parseJSON } = require('./utilities');
 
 // modue scaffolding
 const handler = {};
@@ -24,7 +25,6 @@ handler.handleReqRes = (req, res) => {
   const path = parsedUrl.pathname;
   const trimmedpath = path.replace(/^\/+|\/+$/g, '');
   const queryStringObject = parsedUrl.query;
-
   const method = req.method.toLowerCase();
   const headersObject = req.headers;
 
@@ -51,17 +51,19 @@ handler.handleReqRes = (req, res) => {
   req.on('end', () => {
     realData += decoder.end();
 
+    requestProperties.body = parseJSON(realData);
+
     choseHandler(requestProperties, (statusCode, payload) => {
       statusCode = typeof statusCode === 'number' ? statusCode : 500;
       payload = typeof payload === 'object' ? payload : {};
+
       const payloadString = JSON.stringify(payload);
 
       // return the final response
+      res.setHeader('Content-Type', 'application/json');
       res.writeHead(statusCode);
       res.end(payloadString);
     });
-
-    res.end(`your data is "${realData}"`);
   });
 };
 
