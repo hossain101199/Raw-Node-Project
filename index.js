@@ -5,11 +5,11 @@
  * Author: Hossain
  *
  */
+
 // dependencies
 const http = require('http');
 const { handleReqRes } = require('./helpers/handleReqRes');
 const environments = require('./helpers/environments');
-// const data = require('./lib/data');
 
 // app object - module scaffolding
 const app = {};
