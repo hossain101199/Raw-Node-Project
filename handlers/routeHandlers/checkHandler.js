@@ -33,7 +33,7 @@ handler._check = {};
 
 // write check to file
 // {
-//     "protocole":"http",
+//     "protocol":"http",
 //     "url":"hello.com",
 //     "method":"GET",
 //     "successCodes":[200, 201],
@@ -41,9 +41,9 @@ handler._check = {};
 // }
 handler._check.post = (requestProperties, callback) => {
   // validate inputs
-  const protocole = typeof requestProperties.body.protocole === 'string'
-    && ['http', 'https'].indexOf(requestProperties.body.protocole) > -1
-      ? requestProperties.body.protocole
+  const protocol = typeof requestProperties.body.protocol === 'string'
+    && ['http', 'https'].indexOf(requestProperties.body.protocol) > -1
+      ? requestProperties.body.protocol
       : false;
 
   const url = typeof requestProperties.body.url === 'string'
@@ -68,7 +68,7 @@ handler._check.post = (requestProperties, callback) => {
       ? requestProperties.body.timeoutSeconds
       : false;
 
-  if (protocole && url && method && successCodes && timeoutSeconds) {
+  if (protocol && url && method && successCodes && timeoutSeconds) {
     // verify the token
     const token = typeof requestProperties.headersObject.token === 'string'
         ? requestProperties.headersObject.token
@@ -95,7 +95,7 @@ handler._check.post = (requestProperties, callback) => {
                   const checkObject = {
                     id: checkID,
                     userPhone,
-                    protocole,
+                    protocol,
                     url,
                     method,
                     successCodes,
@@ -199,7 +199,7 @@ handler._check.get = (requestProperties, callback) => {
 // {
 //     "id": "4n01easlkxgho5xuv6nt",
 //     "userPhone": "01756400875",
-//     "protocole": "http",
+//     "protocol": "http",
 //     "url": "hello.com",
 //     "method": "GET",
 //     "successCodes": [
@@ -215,9 +215,9 @@ handler._check.put = (requestProperties, callback) => {
       ? requestProperties.body.id
       : false;
 
-  const protocole = typeof requestProperties.body.protocole === 'string'
-    && ['http', 'https'].indexOf(requestProperties.body.protocole) > -1
-      ? requestProperties.body.protocole
+  const protocol = typeof requestProperties.body.protocol === 'string'
+    && ['http', 'https'].indexOf(requestProperties.body.protocol) > -1
+      ? requestProperties.body.protocol
       : false;
 
   const url = typeof requestProperties.body.url === 'string'
@@ -243,7 +243,7 @@ handler._check.put = (requestProperties, callback) => {
       : false;
 
   if (id) {
-    if (protocole || url || method || successCodes || timeoutSeconds) {
+    if (protocol || url || method || successCodes || timeoutSeconds) {
       data.read('checks', id, (err1, checkData) => {
         if (!err1 && checkData) {
           const checkObject = parseJSON(checkData);
@@ -257,8 +257,8 @@ handler._check.put = (requestProperties, callback) => {
             parseJSON(checkData).userPhone,
             (tokenIsValid) => {
               if (tokenIsValid) {
-                if (protocole) {
-                  checkObject.protocole = protocole;
+                if (protocol) {
+                  checkObject.protocol = protocol;
                 }
 
                 if (url) {
@@ -345,7 +345,7 @@ handler._check.delete = (requestProperties, callback) => {
                           && userObject.checks instanceof Array
                             ? userObject.checks
                             : [];
-                        console.log('348', userChecks);
+
                         // remove the deleted check id from user's list of checks
                         const checkPosition = userChecks.indexOf(id);
 
@@ -362,7 +362,10 @@ handler._check.delete = (requestProperties, callback) => {
                             userObject,
                             (error4) => {
                               if (!error4) {
-                                callback(200, { success: 'check deleted and user data updated' });
+                                callback(200, {
+                                  success:
+                                    'check deleted and user data updated',
+                                });
                               } else {
                                 callback(500, {
                                   error: 'failed to update user data',
